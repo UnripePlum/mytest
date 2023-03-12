@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mytest/model/user_model.dart';
 import 'package:mytest/view/sign_in.dart';
 import 'package:mytest/view/sign_up.dart';
 
@@ -34,8 +36,8 @@ class MyApp extends StatelessWidget {
         ),
       ],
       home: MainPage(),
-    );
 
+    );
   }
 }
 
@@ -49,39 +51,40 @@ class MainPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Obx(() => AuthController.curUser.length == 0
+            Obx(() =>
+            AuthController.curUser.length == 0
                 ? TextButton(
-                    onPressed: () {
-                      Get.toNamed('/signup');
-                    },
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(color: Colors.blue, fontSize: 24),
-                    ))
+                onPressed: () {
+                  Get.toNamed('/signup');
+                },
+                child: Text(
+                  "Sign Up",
+                  style: TextStyle(color: Colors.blue, fontSize: 24),
+                ))
                 : Text(
-                    AuthController.curUser[0].username,
-                    style: TextStyle(color: Colors.blue, fontSize: 24),
-                  )),
-            Obx(() => AuthController.curUser.length == 0
+              AuthController.curUser[0].username,
+              style: TextStyle(color: Colors.blue, fontSize: 24),
+            )),
+            Obx(() =>
+            AuthController.curUser.length == 0
                 ? TextButton(
-                    onPressed: () {
-                      Get.toNamed('/signin');
-                    },
-                    child: Text(
-                      "Sign In",
-                      style: TextStyle(color: Colors.blue, fontSize: 24),
-                    ),
-                  )
+              onPressed: () {
+                Get.toNamed('/signin');
+              },
+              child: Text(
+                "Sign In",
+                style: TextStyle(color: Colors.blue, fontSize: 24),
+              ),
+            )
                 : TextButton(
-                    onPressed: () {
-                      AuthController.instance.authentication.currentUser?.delete();
-                      AuthController.curUser.clear();
-                    },
-                    child: Text(
-                      "Sign Out",
-                      style: TextStyle(color: Colors.blue, fontSize: 24),
-                    ),
-                  )),
+              onPressed: () {
+                AuthController.instance.logout();
+              },
+              child: Text(
+                "Sign Out",
+                style: TextStyle(color: Colors.blue, fontSize: 24),
+              ),
+            )),
           ],
         ),
       ),

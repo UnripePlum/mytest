@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mytest/controller/sign_controller.dart';
 import 'package:mytest/model/user_model.dart';
 
 import '../main.dart';
@@ -9,7 +8,7 @@ import '../main.dart';
 class AuthController extends GetxController {
   static AuthController instance = Get.find();
   late Rx<User?> _user;
-  FirebaseAuth authentication = FirebaseAuth.instance;
+  static FirebaseAuth authentication = FirebaseAuth.instance;
   static var curUser = <UserModel>[].obs;
 
   @override
@@ -21,19 +20,26 @@ class AuthController extends GetxController {
   }
 
   _moveToPage(User? user) {
-    if (user == null) {
-    } else {
+    if (user == null) {} else {
+      reloadUser(userToUserModel(user));
       Get.back();
     }
+  }
+
+  UserModel userToUserModel(User user) {
+    return UserModel(
+      email: user.email as String,
+      username: user.displayName as String,
+    );
   }
 
   void register(UserModel userModel) async {
     try {
       UserCredential userCredential =
-          await authentication.createUserWithEmailAndPassword(
-              email: userModel.email, password: userModel.password);
+      await authentication.createUserWithEmailAndPassword(
+          email: userModel.email, password: userModel.password as String);
       userCredential.user?.updateDisplayName(userModel.username);
-      reloadUser(userModel);
+      reloadUser(userToUserModel(userCredential.user as User));
       Get.snackbar(
         "Success message",
         "User message",
@@ -44,7 +50,8 @@ class AuthController extends GetxController {
           style: TextStyle(color: Colors.white),
         ),
         messageText: Text(
-          "email : ${userModel.email}, password : ${userModel.password}, name : ${userModel.username}",
+          "email : ${userCredential.user?.email}, name : ${userCredential.user
+              ?.displayName}",
           style: TextStyle(
             color: Colors.white,
           ),
@@ -72,6 +79,7 @@ class AuthController extends GetxController {
 
   void logout() {
     authentication.signOut();
+    curUser.clear();
   }
 
   void reloadUser(UserModel userModel) {
@@ -83,9 +91,7 @@ class AuthController extends GetxController {
       UserCredential userCredential = await authentication
           .signInWithEmailAndPassword(email: email, password: password);
       User tempUser = userCredential.user as User;
-      UserModel userModel = new UserModel(email, password, tempUser.displayName as String);
-      reloadUser(userModel);
-
+      reloadUser(userToUserModel(tempUser));
 
       Get.snackbar(
         "Success message",
@@ -97,7 +103,7 @@ class AuthController extends GetxController {
           style: TextStyle(color: Colors.white),
         ),
         messageText: Text(
-          "email : ${userModel.email}, password : ${userModel.password}, name : ${userModel.username}",
+          "email : ${tempUser.email}, name : ${tempUser.displayName}",
           style: TextStyle(
             color: Colors.white,
           ),

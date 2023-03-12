@@ -8,7 +8,6 @@ class SignUpPage extends StatelessWidget {
   var passwordController = TextEditingController();
   var usernameController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,17 +46,17 @@ class SignUpPage extends StatelessWidget {
               ),
             ),
             TextButton(
-                onPressed: () {
-                  UserModel userModel = new UserModel(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                      usernameController.text.trim());
-                  AuthController.instance.register(userModel);
-                },
-                child: Text(
-                  "SignUp",
-                  style: TextStyle(color: Colors.red, fontSize: 24),
-                ),
+              onPressed: () {
+                UserModel userModel = UserModel(
+                    email: emailController.text.trim(),
+                    password: passwordController.text.trim(),
+                    username: usernameController.text.trim());
+                AuthController.instance.register(userModel);
+              },
+              child: Text(
+                "SignUp",
+                style: TextStyle(color: Colors.red, fontSize: 24),
+              ),
             ),
           ],
         ),
