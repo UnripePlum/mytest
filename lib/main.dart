@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
         ),
       ],
       home: MainPage(),
-
     );
   }
 }
@@ -51,40 +50,37 @@ class MainPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Obx(() =>
-            AuthController.curUser.length == 0
+            Obx(() => AuthController.curUser[0] == null
                 ? TextButton(
-                onPressed: () {
-                  Get.toNamed('/signup');
-                },
-                child: Text(
-                  "Sign Up",
-                  style: TextStyle(color: Colors.blue, fontSize: 24),
-                ))
+                    onPressed: () {
+                      Get.toNamed('/signup');
+                    },
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(color: Colors.blue, fontSize: 24),
+                    ))
                 : Text(
-              AuthController.curUser[0].username,
-              style: TextStyle(color: Colors.blue, fontSize: 24),
-            )),
-            Obx(() =>
-            AuthController.curUser.length == 0
+                    AuthController.curUser[0]?.displayName as String
+                  )),
+            Obx(() => AuthController.curUser[0] == null
                 ? TextButton(
-              onPressed: () {
-                Get.toNamed('/signin');
-              },
-              child: Text(
-                "Sign In",
-                style: TextStyle(color: Colors.blue, fontSize: 24),
-              ),
-            )
+                    onPressed: () {
+                      Get.toNamed('/signin');
+                    },
+                    child: Text(
+                      "Sign In",
+                      style: TextStyle(color: Colors.blue, fontSize: 24),
+                    ),
+                  )
                 : TextButton(
-              onPressed: () {
-                AuthController.instance.logout();
-              },
-              child: Text(
-                "Sign Out",
-                style: TextStyle(color: Colors.blue, fontSize: 24),
-              ),
-            )),
+                    onPressed: () {
+                      AuthController.instance.logout();
+                    },
+                    child: Text(
+                      "Sign Out",
+                      style: TextStyle(color: Colors.blue, fontSize: 24),
+                    ),
+                  )),
           ],
         ),
       ),

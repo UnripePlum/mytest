@@ -9,7 +9,7 @@ class AuthController extends GetxController {
   static AuthController instance = Get.find();
   late Rx<User?> _user;
   static FirebaseAuth authentication = FirebaseAuth.instance;
-  static var curUser = <UserModel>[].obs;
+  static var curUser = <User?>[].obs;
 
   @override
   void onReady() {
@@ -20,26 +20,21 @@ class AuthController extends GetxController {
   }
 
   _moveToPage(User? user) {
-    if (user == null) {} else {
-      reloadUser(userToUserModel(user));
+    if (user == null) {
+    } else {
+      reloadUser((user));
       Get.back();
     }
   }
 
-  UserModel userToUserModel(User user) {
-    return UserModel(
-      email: user.email as String,
-      username: user.displayName as String,
-    );
-  }
 
   void register(UserModel userModel) async {
     try {
       UserCredential userCredential =
       await authentication.createUserWithEmailAndPassword(
-          email: userModel.email, password: userModel.password as String);
+          email: userModel.email, password: userModel.password);
       userCredential.user?.updateDisplayName(userModel.username);
-      reloadUser(userToUserModel(userCredential.user as User));
+      reloadUser(userCredential.user);
       Get.snackbar(
         "Success message",
         "User message",
@@ -82,16 +77,19 @@ class AuthController extends GetxController {
     curUser.clear();
   }
 
-  void reloadUser(UserModel userModel) {
-    curUser.assign(userModel);
+  void reloadUser(User? user) {
+    curUser.assign(user);
   }
 
   void login(String email, String password) async {
     try {
       UserCredential userCredential = await authentication
           .signInWithEmailAndPassword(email: email, password: password);
+      if(userCredential.user == null){
+        return;
+      }
       User tempUser = userCredential.user as User;
-      reloadUser(userToUserModel(tempUser));
+      reloadUser(tempUser);
 
       Get.snackbar(
         "Success message",
